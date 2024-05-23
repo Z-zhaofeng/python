@@ -8,18 +8,24 @@ import time
 
 MAX_WAIT = 5
 
+# 整个测试用例的目的是确保待办事项列表应用的基本功能正常工作，
+# 包括不同用户可以创建自己的待办事项列表，且列表的URL是唯一的，同时页面的布局和样式也符合预期。
+# 这些测试对于确保Web应用的质量至关重要。
 
 class NewVisitorTest(StaticLiveServerTestCase):
     def setUp(self):
+        # setUp方法在每个测试方法运行前被调用，用于初始化WebDriver（在这个例子中是Firefox浏览器）
         self.browser = webdriver.Firefox()
         test_server = os.environ.get("TEST_SERVER")
         if test_server:
             self.live_server_url = "http://" + test_server
 
     def tearDown(self):
+        # tearDown方法在每个测试方法运行后被调用，用于关闭浏览器。
         self.browser.quit()
 
     def wait_for_row_in_list_table(self, row_text):
+        # 这个方法等待直到指定的文本出现在列表表格中。它通过查找表格元素和行元素，然后检查预期的文本是否在行中。
         start_time = time.time()
         while True:
             try:
@@ -69,7 +75,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Satisfied, she goes back to sleep
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
-        # Edith starts a new to-do list
+        # 这个测试方法模拟了两个用户（Edith和Francis）来到网站并创建他们的待办事项列表。
+        # 它首先清除浏览器的cookies来模拟新用户的到来，然后检查每个用户创建的列表是否有唯一的URL，并且一个用户的列表不会显示给另一个用户。
         self.browser.get(self.live_server_url)
         inputbox = self.browser.find_element(By.ID, "id_new_item")
         inputbox.send_keys("Buy peacock feathers")
@@ -113,10 +120,11 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Satisfied, they both go back to sleep
 
     def test_layout_and_styling(self):
-        # Edith goes to the home page,
+        # 这个测试方法检查输入框是否在页面上居中显示。
+        # 它通过设置浏览器窗口的大小，然后计算输入框的位置和宽度的一半，来检查输入框是否位于页面的中心。
         self.browser.get(self.live_server_url)
 
-        # Her browser window is set to a very specific size
+        # 她的浏览器窗口被设置为非常特定的大小
         self.browser.set_window_size(1024, 768)
 
         # She notices the input box is nicely centered
